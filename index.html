@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>File Storage App</title>
@@ -59,26 +59,62 @@
   <div class="container">
     <div class="form-container">
       <h1>File Storage App</h1>
-      <label for="password">Enter password:</label>
-      <input type="password" id="password">
+      <label for="create-password">Create a password:</label>
+      <input type="password" id="create-password">
+      <button onclick="createPassword()">Create</button>
+      <label for="access-password">Enter password:</label>
+      <input type="password" id="access-password">
       <button onclick="accessFiles()">Access Files</button>
+      <label for="file">Select a file:</label>
+      <input type="file" id="file">
+      <button onclick="storeFile()">Store</button>
       <div class="result" id="result"></div>
     </div>
   </div>
 
   <script>
-    function accessFiles() {
-      var passwordInput = document.getElementById('password');
+    var storedPassword;
+
+    function createPassword() {
+      var createPasswordInput = document.getElementById('create-password');
+      storedPassword = createPasswordInput.value;
+      alert('Password created successfully!');
+    }
+
+    function storeFile() {
+      var fileInput = document.getElementById('file');
       var resultDiv = document.getElementById('result');
 
-      var password = passwordInput.value;
-      var storedPassword = localStorage.getItem('storedPassword');
+      if (fileInput.files.length > 0) {
+        var file = fileInput.files[0];
 
-      if (password === storedPassword) {
-        var storedFileContent = localStorage.getItem('storedFileContent');
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var fileContent = e.target.result;
+
+          // Store the file content using the password as the key
+          localStorage.setItem(storedPassword, fileContent);
+
+          resultDiv.innerHTML = 'File stored successfully.';
+        };
+
+        reader.readAsText(file);
+      } else {
+        resultDiv.innerHTML = 'No file selected.';
+      }
+    }
+
+    function accessFiles() {
+      var accessPasswordInput = document.getElementById('access-password');
+      var resultDiv = document.getElementById('result');
+
+      var password = accessPasswordInput.value;
+      var storedFileContent = localStorage.getItem(password);
+
+      if (storedFileContent !== null) {
         resultDiv.innerHTML = 'File content: ' + storedFileContent;
       } else {
-        resultDiv.innerHTML = 'Invalid password.';
+        resultDiv.innerHTML = 'Invalid password or no file found.';
       }
     }
   </script>
