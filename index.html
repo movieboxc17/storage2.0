@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>File Encryption App</title>
+  <title>File Storage App</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,6 +35,10 @@
       margin-bottom: 10px;
     }
 
+    .form-container input[type="password"] {
+      margin-bottom: 10px;
+    }
+
     .form-container button {
       padding: 8px 16px;
       background-color: #4CAF50;
@@ -57,79 +61,42 @@
 <body>
   <div class="container">
     <div class="form-container">
-      <h1>File Encryption App</h1>
+      <h1>File Storage App</h1>
       <label for="file">Select a file:</label>
-      <input type="file" id="file" accept=".txt">
+      <input type="file" id="file">
       <label for="password">Enter password:</label>
       <input type="password" id="password">
-      <button onclick="encryptFile()">Encrypt</button>
-      <button onclick="decryptFile()">Decrypt</button>
+      <button onclick="storeFile()">Store</button>
       <div class="result" id="result"></div>
     </div>
   </div>
 
   <script>
-    function encryptFile() {
+    function storeFile() {
       var fileInput = document.getElementById('file');
       var passwordInput = document.getElementById('password');
       var resultDiv = document.getElementById('result');
 
       if (fileInput.files.length > 0) {
         var file = fileInput.files[0];
-        var reader = new FileReader();
+        var password = passwordInput.value;
 
+        var reader = new FileReader();
         reader.onload = function(e) {
           var fileContent = e.target.result;
-          var password = passwordInput.value;
-          var encryptedFileContent = encrypt(fileContent, password);
-          var encryptedFile = new Blob([encryptedFileContent], { type: 'text/plain' });
-          var downloadUrl = URL.createObjectURL(encryptedFile);
 
-          resultDiv.innerHTML = 'File encrypted successfully. <a href="' + downloadUrl + '" download>Download Encrypted File</a>';
+          // Store the file content and password
+          localStorage.setItem('storedFileContent', fileContent);
+          localStorage.setItem('storedPassword', password);
+
+          resultDiv.innerHTML = 'File stored successfully.';
         };
 
         reader.readAsText(file);
       } else {
         resultDiv.innerHTML = 'No file selected.';
       }
-    }
-
-    function decryptFile() {
-      var fileInput = document.getElementById('file');
-      var passwordInput = document.getElementById('password');
-      var resultDiv = document.getElementById('result');
-
-      if (fileInput.files.length > 0) {
-        var file = fileInput.files[0];
-        var reader = new FileReader();
-
-        reader.onload = function(e) {
-          var fileContent = e.target.result;
-          var password = passwordInput.value;
-          var decryptedFileContent = decrypt(fileContent, password);
-          var decryptedFile = new Blob([decryptedFileContent], { type: 'text/plain' });
-          var downloadUrl = URL.createObjectURL(decryptedFile);
-
-          resultDiv.innerHTML = 'File decrypted successfully. <a href="' + downloadUrl + '" download>Download Decrypted File</a>';
-        };
-
-        reader.readAsText(file);
-      } else {
-        resultDiv.innerHTML = 'No file selected.';
-      }
-    }
-
-    function encrypt(text, password) {
-      var encryptedText = CryptoJS.AES.encrypt(text, password).toString();
-      return encryptedText;
-    }
-
-    function decrypt(encryptedText, password) {
-      var decryptedBytes = CryptoJS.AES.decrypt(encryptedText, password);
-      var decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
-      return decryptedText;
     }
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </body>
 </html>
