@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html>
 <head>
   <title>File Storage App</title>
@@ -31,11 +31,8 @@
       margin-bottom: 10px;
     }
 
-    .form-container input[type="file"] {
-      margin-bottom: 10px;
-    }
-
-    .form-container input[type="password"] {
+    .form-container input[type="password"],
+    .form-container input[type="text"] {
       margin-bottom: 10px;
     }
 
@@ -62,39 +59,26 @@
   <div class="container">
     <div class="form-container">
       <h1>File Storage App</h1>
-      <label for="file">Select a file:</label>
-      <input type="file" id="file">
       <label for="password">Enter password:</label>
       <input type="password" id="password">
-      <button onclick="storeFile()">Store</button>
+      <button onclick="accessFiles()">Access Files</button>
       <div class="result" id="result"></div>
     </div>
   </div>
 
   <script>
-    function storeFile() {
-      var fileInput = document.getElementById('file');
+    function accessFiles() {
       var passwordInput = document.getElementById('password');
       var resultDiv = document.getElementById('result');
 
-      if (fileInput.files.length > 0) {
-        var file = fileInput.files[0];
-        var password = passwordInput.value;
+      var password = passwordInput.value;
+      var storedPassword = localStorage.getItem('storedPassword');
 
-        var reader = new FileReader();
-        reader.onload = function(e) {
-          var fileContent = e.target.result;
-
-          // Store the file content and password
-          localStorage.setItem('storedFileContent', fileContent);
-          localStorage.setItem('storedPassword', password);
-
-          resultDiv.innerHTML = 'File stored successfully.';
-        };
-
-        reader.readAsText(file);
+      if (password === storedPassword) {
+        var storedFileContent = localStorage.getItem('storedFileContent');
+        resultDiv.innerHTML = 'File content: ' + storedFileContent;
       } else {
-        resultDiv.innerHTML = 'No file selected.';
+        resultDiv.innerHTML = 'Invalid password.';
       }
     }
   </script>
